@@ -41,7 +41,7 @@
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 
-#include "trackFeatures.h"
+#include "klt_feature_tracker/trackFeatures.h"
 #include "klt_feature_tracker/TrackFeatures.h"
 
 bool track(klt_feature_tracker::TrackFeatures::Request &req, klt_feature_tracker::TrackFeatures::Response &res);
