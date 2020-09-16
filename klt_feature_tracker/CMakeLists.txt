@@ -24,13 +24,40 @@ find_package(OpenCV REQUIRED)
 
 include_directories(include)
 
-add_executable(klt_feature_tracker_node
-               src/klt_feature_tracker_node.cpp
-               src/klt_feature_tracker.cpp)
-ament_target_dependencies(klt_feature_tracker_node
-                          klt_feature_tracker_msgs
-                          rclcpp
-                          cv_bridge)
+set(dependencies
+  klt_feature_tracker_msgs
+  rclcpp
+  cv_bridge
+)
+
+add_library(${PROJECT_NAME} SHARED
+  src/klt_feature_tracker.cpp
+)
+ament_target_dependencies(${PROJECT_NAME}
+  ${dependencies}
+)
+
+add_executable(${PROJECT_NAME}_node
+  src/klt_feature_tracker_node.cpp
+)
+target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME})
+ament_target_dependencies(${PROJECT_NAME}_node
+  ${dependencies}
+)
+
+install(TARGETS ${PROJECT_NAME}_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(DIRECTORY include/
+  DESTINATION include/
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
@@ -38,5 +65,9 @@ if(BUILD_TESTING)
   set(ament_cmake_cpplint_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(${dependencies})
 
 ament_package()
